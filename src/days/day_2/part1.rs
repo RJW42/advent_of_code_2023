@@ -12,26 +12,24 @@ struct Game {
 }
 
 
-fn main() {
+pub fn run(file_name: &str) -> Result<u32, &'static str> {
     let mut output = 0;
 
-    if let Ok(lines) = read_lines("./inputs/day_2.txt") {
+    if let Ok(lines) = read_lines(file_name) {
         for line in lines {
             if let Ok(line) = line {
                 if let Some(game) = parse_game(&line) {
-                    let power = game.red * game.blue * game.green;
-                    
-                    if power == 0 {
-                        println!("hmmmmm")
+                    if !is_possible(&game) {
+                        continue;
                     }
 
-                    output += power;
+                    output += game.id;
                 }
             }
         }
     }
 
-    println!("{}", output);
+    Ok(output)
 }
 
 
@@ -83,9 +81,9 @@ fn parse_digit(c: char) -> Option<u32> {
     Some(d as u32)
 }
 
-// fn is_possible(game: &Game) -> bool {
-//     return game.red <= 12 && game.green <= 13 && game.blue <= 14;
-// }
+fn is_possible(game: &Game) -> bool {
+    return game.red <= 12 && game.green <= 13 && game.blue <= 14;
+}
 
 
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>

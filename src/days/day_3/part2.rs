@@ -1,7 +1,6 @@
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
-use std::cmp;
 
 
 enum Entry {
@@ -11,14 +10,14 @@ enum Entry {
 }
 
 
-fn main() {
+pub fn run(file_name: &str) -> Result<u32, &'static str> {
     let mut grid: Vec<Entry> = Vec::new();
     let mut symbol_poss: Vec<(usize, usize)> = Vec::new();
     let mut width = 0;
     let mut height = 0;
     let mut id = 1;
 
-    if let Ok(lines) = read_lines("./inputs/day_3.txt") {
+    if let Ok(lines) = read_lines(file_name) {
         for line in lines {
             if let Ok(line) = line {
                 parse_line(&mut grid, &mut symbol_poss, &line, height, &mut id);
@@ -169,7 +168,7 @@ fn main() {
                 }
             }
         }
-        println!("{} ", product);
+        // println!("{} ", product);
         if sn != 0 && sn2 != 0 {
             sum += product;
         }
@@ -178,7 +177,7 @@ fn main() {
     // print_grid(&grid, width, height);
 
     
-    println!("{}", sum);
+    Ok(sum)
 }
 
 fn mark_visited(x: i32, y: i32, width: usize, grid: &mut Vec<Entry>) -> Option<(u32, u32)> {
@@ -226,8 +225,6 @@ fn parse_line(grid: &mut Vec<Entry>, symbol_poss: &mut Vec<(usize, usize)>,line:
         for _ in 0..current_number_size {
             grid.push(Entry::Number(current_number, *id, false));
         }
-        current_number = 0;
-        current_number_size = 0;
         *id += 1;
     } 
 }
@@ -239,7 +236,7 @@ where P: AsRef<Path>, {
     Ok(io::BufReader::new(file).lines())
 }
 
-fn print_grid(grid: &Vec<Entry>, width: usize, height: usize) {
+fn _print_grid(grid: &Vec<Entry>, width: usize, height: usize) {
     for y in 0..height {
         let mut curr_number_visited = false;
         for x in 0..width {

@@ -1,13 +1,12 @@
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
-use std::cmp;
 
 
-fn main() {
+pub fn run(file_name: &str) -> Result<u32, &'static str> {
     let mut output = 0;
 
-    if let Ok(lines) = read_lines("./inputs/day_4.txt") {
+    if let Ok(lines) = read_lines(file_name) {
         for line in lines {
             if let Ok(line) = line {
                 let mut c_ns = Vec::new();
@@ -34,7 +33,7 @@ fn main() {
     }
 
 
-    println!("{}", output);
+    Ok(output)
 }
 
 fn parse_line(card_numbers: &mut Vec<u32>, winning_numbers: &mut Vec<u32>, line: &str) {

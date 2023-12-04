@@ -2,30 +2,37 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
 
+use crate::days::Part;
 
-fn _main() {
+
+pub fn run(file_name: &str, part: Part) -> Result<u32, &'static str> {
     let mut product = 0;
+    let use_words = match part {
+        Part::P1 => false,
+        Part::P2 => true
+    };
 
-    if let Ok(lines) = read_lines("./inputs/day_1.txt") {
-        // Consumes the iterator, returns an (Optional) String
-        for line in lines {
-            if let Ok(line) = line {
-                let v = parse_line(&line, true);
-                
-                let n = if v.len() == 0 {
-                    0
-                } else {
-                    v[0] * 10 + v[v.len() - 1]
-                };
+    let Ok(lines) = read_lines(file_name) else {
+        return Err("Failed to read lines");
+    };
 
-                
-                product += n;
-                println!("- {}", n);
-            }
+    
+    for line in lines {
+        if let Ok(line) = line {
+            let v = parse_line(&line, use_words);
+            
+            let n = if v.len() == 0 {
+                0
+            } else {
+                v[0] * 10 + v[v.len() - 1]
+            };
+
+            
+            product += n;
         }
     }
 
-    println!("{}", product);
+    Ok(product)
 }
 
 fn parse_line(line: &str, use_words: bool) -> Vec<u32> {
@@ -50,7 +57,7 @@ fn parse_line(line: &str, use_words: bool) -> Vec<u32> {
             let slice = &line[j..(i + 1)];
             let len = digits.len();
 
-            println!("  - {} ", slice);
+            // println!("  - {} ", slice);
 
             match slice {
                 "one" => digits.push(1),

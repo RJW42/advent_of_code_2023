@@ -1,99 +1,52 @@
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
-use std::cmp;
+mod days;
+
+use days::{day_1, day_2, day_3, day_4};
+use days::Part::*;
 
 
 fn main() {
-    let mut output = 0;
-    let mut cards = Vec::<(Vec<u32>, Vec<u32>)>::new();
-    let mut card_amounts = Vec::new();
+    let day = 5;
 
+    let function = match day {
+        1 => |p| day_1::run("inputs/day_1.txt", p),
+        2 => |p| day_2::run("inputs/day_2.txt", p),
+        3 => |p| day_3::run("inputs/day_3.txt", p),
+        4 => |p| day_4::run("inputs/day_4.txt", p),
+        5 => |_p| todo!(),
+        6 => |_p| todo!(),
+        7 => |_p| todo!(),
+        8 => |_p| todo!(),
+        9 => |_p| todo!(),
+        10 => |_p| todo!(),
+        11 => |_p| todo!(),
+        12 => |_p| todo!(),
+        13 => |_p| todo!(),
+        14 => |_p| todo!(),
+        15 => |_p| todo!(),
+        16 => |_p| todo!(),
+        17 => |_p| todo!(),
+        18 => |_p| todo!(),
+        19 => |_p| todo!(),
+        20 => |_p| todo!(),
+        21 => |_p| todo!(),
+        22 => |_p| todo!(),
+        23 => |_p| todo!(),
+        24 => |_p| todo!(),
+        25 => |_p| todo!(),
+        _ => |_| Result::Err("Invalid Day"),
+    };
 
-    if let Ok(lines) = read_lines("./inputs/day_4.txt") {
-        for line in lines {
-            if let Ok(line) = line {
-                let mut c_ns = Vec::new();
-                let mut w_ns = Vec::new();
+    let result = function(P1)
+        .map_err(|e| format!("Failed P1: {e}"))
+        .and_then(|r| {
+            println!("P1 Result: {}", r);
+            return function(P2)
+                .map_err(|e| format!("Failed P2: {e}"))
+                .map(|r| println!("P2 Results: {}", r));
+        });
 
-                parse_line(&mut c_ns, &mut w_ns, &line);
-
-                cards.push((c_ns, w_ns));
-                card_amounts.push(1);
-            }
-        }
-    }
-
-    for (i, (c_ns, w_ns)) in cards.iter().enumerate() {
-        let mut winnings = 0;
-        
-        for n in c_ns {
-            if w_ns.contains(n) {
-                winnings += 1;
-                continue;
-            }
-        }
-
-        println!(" - {} {}", i, winnings);
-
-        for j in (i + 1)..(i + winnings + 1) {
-            if j >= card_amounts.len() {
-                break;
-            }
-            card_amounts[j] += card_amounts[i];
-            println!("    - {} {}", j, card_amounts[j]);
-        }
-    }
-
-    for n in card_amounts {
-        output += n;
-    }
-
-
-    println!("{}", output);
+    match result {
+        Ok(_) => (),
+        Err(reason) => println!("{}", reason)
+    };
 }
-
-fn parse_line(card_numbers: &mut Vec<u32>, winning_numbers: &mut Vec<u32>, line: &str) {
-    let mut start = false;
-    let mut parsed_cn = false;
-
-    let mut current_number = 0;
-
-    for c in line.chars() {
-        if !start {
-            if c == ':' {
-                start = true;
-            }
-            continue;
-        }
-
-        if c >= '0' && c <= '9' {
-            current_number = current_number * 10 + (c as u32 - '0' as u32);
-            continue;
-        }
-
-        if c == '|' {
-            parsed_cn = true;
-            continue;
-        }
-
-        if current_number == 0 {
-            continue;
-        }
-
-        if parsed_cn {
-            winning_numbers.push(current_number);
-        } else {
-            card_numbers.push(current_number);
-        }
-        current_number = 0;
-    }
-    winning_numbers.push(current_number);
-}
-
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where P: AsRef<Path>, {
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
-}
-
