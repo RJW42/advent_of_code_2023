@@ -4,6 +4,7 @@ use crate::days::{read_lines, parse_num};
 use std::fs::File;
 use std::io::{self};
 use std::cmp::Ordering;
+use std::cmp;
 
 struct Input {
     seeds: Vec<u64>,
@@ -27,20 +28,48 @@ struct MapElement {
 pub fn run(file_name: &str, part: Part) -> Result<u32, &'static str> {
     match part {
         Part::P1 => part1(file_name),
-        Part::P2 => todo!(),
+        Part::P2 => part2(file_name),
     }
 }
 
 
 
+fn part2(file_name: &str) -> Result<u32, &'static str> {
+    let input = parse_input(file_name)?;
+
+    // print_input(&input);
+    let mut min = std::u64::MAX;
+    for pair in input.seeds.chunks(2) {
+        let s_min = pair[0];
+        let s_max = pair[0] + pair[1];
+        let mut s = s_min;
+
+        println!("{}", s_min);
+
+        loop {
+            if s >= s_max {
+                break;
+            }
+
+            let (n, c) = get_soil_number(&input, s);
+            min = cmp::min(min, n);
+
+            s += cmp::max(1, c);
+        }
+    }
+
+    Ok(min as u32)
+}
+
+
 fn part1(file_name: &str) -> Result<u32, &'static str> {
     let input = parse_input(file_name)?;
 
-    print_input(&input);
+    // print_input(&input);
     let mut min = std::u64::MAX;
     for s in &input.seeds {
-        let n = get_soil_number(&input, *s);
-        println!("s{} n{}", *s, n);
+        let (n, _) = get_soil_number(&input, *s);
+        // println!("s{} n{}", *s, n);
         if n < min {
             min = n;
         }
@@ -50,24 +79,30 @@ fn part1(file_name: &str) -> Result<u32, &'static str> {
 }
 
 
-fn get_soil_number(input: &Input, seed: u64) -> u64 {
-    let soil = get_mapping(seed, &input.seed_to_soil);
-    let fert = get_mapping(soil, &input.soil_to_fertilizer);
-    let water = get_mapping(fert, &input.fertilizer_to_water);
-    let light = get_mapping(water, &input.water_to_light);
-    let temp = get_mapping(light, &input.light_to_temerature);
-    let hum = get_mapping(temp, &input.temerature_to_humidity);
-    let loc = get_mapping(hum, &input.humidity_to_location);
-    return loc;
+fn get_soil_number(input: &Input, seed: u64) -> (u64, u64) {
+    let mut min_change = std::u64::MAX;
+
+    let soil = get_mapping(seed, &input.seed_to_soil, &mut min_change);
+    let fert = get_mapping(soil, &input.soil_to_fertilizer, &mut min_change);
+    let water = get_mapping(fert, &input.fertilizer_to_water, &mut min_change);
+    let light = get_mapping(water, &input.water_to_light, &mut min_change);
+    let temp = get_mapping(light, &input.light_to_temerature, &mut min_change);
+    let hum = get_mapping(temp, &input.temerature_to_humidity, &mut min_change);
+    let loc = get_mapping(hum, &input.humidity_to_location, &mut min_change);
+
+    return (loc, min_change);
 }
 
-fn get_mapping(n: u64, map: &Vec<MapElement>) -> u64 {
+fn get_mapping(n: u64, map: &Vec<MapElement>, min_change: &mut u64) -> u64 {
     for el in map {
         if n < el.src_range_start {
+            *min_change = cmp::min(*min_change, el.src_range_start - n);
             return n;
         }
 
         if n < el.src_range_start + el.length {
+            let change = (el.src_range_start + el.length) - n;
+            *min_change = cmp::min(*min_change, change);
             return el.des_range_start + (n - el.src_range_start)
         }
     }
@@ -218,7 +253,7 @@ fn parse_seeds(lines: &mut io::Lines<io::BufReader<File>>) -> Option<Vec<u64>>{
     Some(seeds)
 }
 
-fn print_input(input: &Input) {
+fn _print_input(input: &Input) {
     println!("Seeds:");
     print!("    ");
 
@@ -229,22 +264,22 @@ fn print_input(input: &Input) {
     println!("");
 
     println!("seed_to_soil: ");
-    print_mapping(&input.seed_to_soil);
+    _print_mapping(&input.seed_to_soil);
     println!("soil_to_fertilizer: ");
-    print_mapping(&input.soil_to_fertilizer);
+    _print_mapping(&input.soil_to_fertilizer);
     println!("fertilizer_to_water: ");
-    print_mapping(&input.fertilizer_to_water);
+    _print_mapping(&input.fertilizer_to_water);
     println!("water_to_light: ");
-    print_mapping(&input.water_to_light);
+    _print_mapping(&input.water_to_light);
     println!("light_to_temerature: ");
-    print_mapping(&input.light_to_temerature);
+    _print_mapping(&input.light_to_temerature);
     println!("temerature_to_humidity: ");
-    print_mapping(&input.temerature_to_humidity);
+    _print_mapping(&input.temerature_to_humidity);
     println!("humidity_to_location: ");
-    print_mapping(&input.humidity_to_location);
+    _print_mapping(&input.humidity_to_location);
 }
 
-fn print_mapping(input: &Vec<MapElement>) {
+fn _print_mapping(input: &Vec<MapElement>) {
     for el in input {
         println!("    s{} d{} l{}", 
             el.src_range_start, el.des_range_start, el.length
