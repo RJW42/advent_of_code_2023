@@ -1,7 +1,7 @@
 mod days;
 
-use days::{day_1, day_2, day_3, day_4};
-use days::Part::*;
+use days::{day_1, day_2, day_3, day_4, day_5};
+use days::Part::{P1, P2};
 
 
 fn main() {
@@ -12,7 +12,7 @@ fn main() {
         2 => |p| day_2::run("inputs/day_2.txt", p),
         3 => |p| day_3::run("inputs/day_3.txt", p),
         4 => |p| day_4::run("inputs/day_4.txt", p),
-        5 => |_p| todo!(),
+        5 => |p| day_5::run("inputs/day_5.txt", p),
         6 => |_p| todo!(),
         7 => |_p| todo!(),
         8 => |_p| todo!(),
