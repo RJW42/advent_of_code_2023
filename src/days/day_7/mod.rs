@@ -38,8 +38,7 @@ enum CardType {
 struct Hand {
     cards: [CardType; 5],
     hand_type: HandType,
-    bid: u32,
-    joker_count: u32
+    bid: u32
 }
 
 
@@ -144,81 +143,78 @@ fn parse_hand(line: &str, use_joker: bool) -> Option<Hand> {
     Some(Hand {
         cards: hand,
         hand_type,
-        bid: bid,
-        joker_count
+        bid: bid
     })
 }
 
 
 fn determin_type(count: &[u32; 13], joker_count: u32) -> HandType {
+    let mut has_four = false;
     let mut has_three = false;
-    let mut has_two = false;
+    let mut has_two_pair = false;
+    let mut has_pair = false;
 
     for c in count {
-        if *c == 5 {
-            return HandType::FiveOfAKind;
-        } else if *c == 4 {
-            if joker_count == 1 {
-                return HandType::FiveOfAKind;
-            }
-            return HandType::FourOfAKind;
-        } else if *c == 3 {
-            has_three = true;
-            if joker_count == 2 {
-                return HandType::FiveOfAKind;
-            } else if joker_count == 1 {
-                return HandType::FourOfAKind;
-            } else if has_two {
-                return HandType::FullHouse;
-            }
-        } else if *c == 2 {
-            if joker_count == 3 {
-                return HandType::FiveOfAKind
-            } else if has_three {
-                return HandType::FullHouse;
-            } else if has_two {
-                if joker_count == 1 {
-                    return HandType::FullHouse;
-                } else if joker_count == 2 {
-                    return HandType::FourOfAKind;
-                }
-                return HandType::TwoPair;
+        match *c {
+            5 => return HandType::FiveOfAKind,
+            4 => has_four = true,
+            3 => has_three = true,
+            2 => if has_pair {
+                has_two_pair = true; 
             } else {
-                has_two = true;
-            }
-        }
+                has_pair = true
+            },
+            _ => ()
+        };
     }
 
-    if has_two && has_three {
-        return HandType::FullHouse;
-    }
-
-    if has_three {
-        if joker_count == 1 {
-            return HandType::FourOfAKind;
-        } else if joker_count == 2 {
+    if has_four {
+        if joker_count == 1 || joker_count == 4 {
             return HandType::FiveOfAKind;
+        } else {
+            return HandType::FourOfAKind;
         }
-        return HandType::ThreeOfAKind;
     }
 
-    if has_two {
-        if joker_count == 1 {
+    if has_three && !has_pair {
+        if joker_count == 3 || joker_count == 1 {
+            return HandType::FourOfAKind;
+        } else {
             return HandType::ThreeOfAKind;
-        } else if joker_count == 3 {
+        }
+    } 
+
+    if has_three && has_pair {
+        if joker_count == 3 || joker_count == 2 {
+            return HandType::FiveOfAKind;
+        } else {
             return HandType::FullHouse;
         }
-        return HandType::OnePair;
+    }
+
+    if has_two_pair {
+        if joker_count == 2 {
+            return HandType::FourOfAKind;
+        } else if joker_count == 1 {
+            return HandType::FullHouse;
+        } else {
+            return HandType::TwoPair;
+        }
+    }
+
+    if has_pair {
+        if joker_count == 1 || joker_count == 2 {
+            return HandType::ThreeOfAKind;
+        } else {
+            return HandType::OnePair;
+        }
     }
 
     if joker_count == 1 {
         return HandType::OnePair;
+    } else {
+        return HandType::HighCard;
     }
-
-    // 251129439 too low
-    // 251333327 too high 
-
-    return HandType::HighCard;
 }
 
 
@@ -226,6 +222,12 @@ impl Ord for Hand {
     fn cmp(&self, other: &Self) -> Ordering {
         if self.hand_type != other.hand_type {
             return self.hand_type.cmp(&other.hand_type);
+        }
+
+        for i in 0..5 {
+            if self.cards[i] != other.cards[i] {
+                return self.cards[i].cmp(&other.cards[i]);
+            }
         }
         self.cards.cmp(&other.cards)
     }
