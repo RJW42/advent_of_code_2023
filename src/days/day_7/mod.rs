@@ -2,7 +2,6 @@ use crate::days::Part;
 use crate::days::{read_lines, parse_num};
 
 use std::cmp::Ordering;
-use std::cmp;
 
 
 #[derive(Debug, Eq, PartialOrd, Ord, PartialEq)]
