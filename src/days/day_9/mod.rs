@@ -5,7 +5,7 @@ use crate::days::{read_lines, parse_num};
 pub fn run(file_name: &str, part: Part) -> Result<u32, &'static str> {
     match part {
         Part::P1 => part1(file_name),
-        Part::P2 => todo!(),
+        Part::P2 => part2(file_name),
     }
 }
 
@@ -15,6 +15,45 @@ fn part1(file_name: &str) -> Result<u32, &'static str> {
     let mut output = 0;
 
     for mut history in histories {
+        // println!("{:?}", history);
+
+        for head in 1..history.len() {
+            // println!(" - {}", head);
+            for curr in (1..(head + 1)).rev() {
+                let prev = curr - 1;
+                let diff = history[curr] - history[prev];
+
+                history[prev] = diff;
+
+                // println!("   - c{}, p{}, d{}", curr, prev, diff);
+                // println!("   - {:?}", history);
+            }
+        }
+
+        // println!("{:?}", history);
+
+        let mut local_value = 0;
+
+        for i in (0..history.len()).rev() {
+            local_value += history[i];
+        }
+
+        // println!("{}", local_value);
+        output += local_value;
+    }
+
+    // println!("{}", output);
+
+    Ok(output as u32)
+}
+
+
+fn part2(file_name: &str) -> Result<u32, &'static str> {
+    let histories = parse_histories(file_name)?;
+    let mut output = 0;
+
+    for history in histories {
+        let mut history: Vec<i64> = history.into_iter().rev().collect();
         println!("{:?}", history);
 
         for head in 1..history.len() {
