@@ -5,12 +5,12 @@ use std::path::Path;
 
 enum Entry {
     Symbol(char),
-    Number(u32, bool),
+    Number(u64, bool),
     Empty
 }
 
 
-pub fn run(file_name: &str) -> Result<u32, &'static str> {
+pub fn run(file_name: &str) -> Result<u64, &'static str> {
     let mut grid: Vec<Entry> = Vec::new();
     let mut symbol_poss: Vec<(usize, usize)> = Vec::new();
     let mut width = 0;
@@ -126,7 +126,7 @@ fn parse_line(grid: &mut Vec<Entry>, symbol_poss: &mut Vec<(usize, usize)>,line:
         
         if c >= '0' && c <= '9' {
             current_number_size += 1;
-            current_number = current_number * 10 + (c as u32 - '0' as u32);
+            current_number = current_number * 10 + (c as u64 - '0' as u64);
         } else if c == '.' {
             grid.push(Entry::Empty);
         } else {

@@ -5,7 +5,7 @@ use std::path::Path;
 use crate::days::Part;
 
 
-pub fn run(file_name: &str, part: Part) -> Result<u32, &'static str> {
+pub fn run(file_name: &str, part: Part) -> Result<u64, &'static str> {
     let mut product = 0;
     let use_words = match part {
         Part::P1 => false,
@@ -35,7 +35,7 @@ pub fn run(file_name: &str, part: Part) -> Result<u32, &'static str> {
     Ok(product)
 }
 
-fn parse_line(line: &str, use_words: bool) -> Vec<u32> {
+fn parse_line(line: &str, use_words: bool) -> Vec<u64> {
     let mut digits = Vec::new();
     let mut prev_digit_index = 0 as usize;
 
@@ -82,14 +82,14 @@ fn parse_line(line: &str, use_words: bool) -> Vec<u32> {
     return digits;
 }
 
-fn parse_digit(c: char) -> Option<u32> {
+fn parse_digit(c: char) -> Option<u64> {
     let d = c as i32 - '0' as i32;
 
     if !(d >= 0 && d <= 9)  {
         return None;
     }
 
-    Some(d as u32)
+    Some(d as u64)
 }
 
 

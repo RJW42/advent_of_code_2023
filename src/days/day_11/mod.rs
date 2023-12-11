@@ -10,16 +10,16 @@ enum Element {
     Galxiy
 }
 
-pub fn run(file_name: &str, part: Part) -> Result<u32, &'static str> {
+pub fn run(file_name: &str, part: Part) -> Result<u64, &'static str> {
     match part {
-        Part::P1 => part2(file_name),
-        Part::P2 => todo!(),
+        Part::P1 => part1(file_name),
+        Part::P2 => part2(file_name),
     }
 }
 
 
 
-fn part1(file_name: &str) -> Result<u32, &'static str> {
+fn part1(file_name: &str) -> Result<u64, &'static str> {
     let mut map = parse_map(file_name)?;
 
     _print_galixy(&map);
@@ -45,19 +45,20 @@ fn part1(file_name: &str) -> Result<u32, &'static str> {
                 (*x2 as i32 - *x1 as i32).abs() + (*y2 as i32 - *y1 as i32).abs()
             ;
 
-            distances += distance as u32;
+            distances += distance as u64;
             count += 1;
             println!("{} {} {}", distance, i , j);
         }
     }
 
     println!("{}", count);
+    println!("{}", distances);
 
-    Ok(distances)
+    Ok(0)
 }
 
 
-fn part2(file_name: &str) -> Result<u32, &'static str> {
+fn part2(file_name: &str) -> Result<u64, &'static str> {
     let map = parse_map(file_name)?;
 
     _print_galixy(&map);
@@ -73,6 +74,7 @@ fn part2(file_name: &str) -> Result<u32, &'static str> {
         for j in (i + 1)..points.len() {
             let (x1, y1) = &points[i];
             let (x2, y2) = &points[j];
+            let emptyy_incrase = 1000000;
 
             let mut distance = 
                 (*x2 as i32 - *x1 as i32).abs() + (*y2 as i32 - *y1 as i32).abs()
@@ -81,7 +83,7 @@ fn part2(file_name: &str) -> Result<u32, &'static str> {
             for empty_row in &empty_rows {
                 if (*y1 < *y2 && *y1 < *empty_row && *empty_row < *y2) || 
                     (*y2 < *y1 && *y2 < *empty_row && *empty_row < *y1) {
-                    distance += 1;
+                    distance += emptyy_incrase - 1;
                 }
             }
 
@@ -89,11 +91,11 @@ fn part2(file_name: &str) -> Result<u32, &'static str> {
             for empty_col in &empty_cols {
                 if (*x1 < *x2 && *x1 < *empty_col && *empty_col < *x2) || 
                     (*x2 < *x1 && *x2 < *empty_col && *empty_col < *x1) {
-                    distance += 1;
+                    distance += emptyy_incrase - 1;
                 }
             }
 
-            distances += distance as u32;
+            distances += distance as u64;
             count += 1;
             println!("{} {} {}", distance, i , j);
         }
@@ -105,7 +107,7 @@ fn part2(file_name: &str) -> Result<u32, &'static str> {
 }
 
 
-fn get_galixies(map: &Vec<Vec<Element>>) -> Vec<(u32, u32)> {
+fn get_galixies(map: &Vec<Vec<Element>>) -> Vec<(u64, u64)> {
     let mut output = Vec::new();
 
     for y in 0..map.len() {
@@ -115,7 +117,7 @@ fn get_galixies(map: &Vec<Vec<Element>>) -> Vec<(u32, u32)> {
             }
 
             output.push(
-                (x as u32, y as u32)
+                (x as u64, y as u64)
             );
         }
     }
@@ -188,7 +190,7 @@ fn expand_galixy(galixy: &mut Vec<Vec<Element>>) {
 }
 
 
-fn get_empty(galixy: &Vec<Vec<Element>>) -> (Vec<u32>, Vec<u32>) {
+fn get_empty(galixy: &Vec<Vec<Element>>) -> (Vec<u64>, Vec<u64>) {
     let width = galixy[0].len();
     let height = galixy.len();
     let mut row = 0;
@@ -213,7 +215,7 @@ fn get_empty(galixy: &Vec<Vec<Element>>) -> (Vec<u32>, Vec<u32>) {
         }
 
         if all_empty {
-            empty_rows.push(row as u32)
+            empty_rows.push(row as u64)
         }
 
         row += 1;
@@ -234,8 +236,8 @@ fn get_empty(galixy: &Vec<Vec<Element>>) -> (Vec<u32>, Vec<u32>) {
             }
         }
 
-        if !all_empty {
-            empty_cols.push(column as u32);
+        if all_empty {
+            empty_cols.push(column as u64);
         }
 
         column += 1;

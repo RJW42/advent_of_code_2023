@@ -3,7 +3,7 @@ use std::io::{self, BufRead};
 use std::path::Path;
 
 
-pub fn run(file_name: &str) -> Result<u32, &'static str> {
+pub fn run(file_name: &str) -> Result<u64, &'static str> {
     let mut output = 0;
 
     if let Ok(lines) = read_lines(file_name) {
@@ -36,7 +36,7 @@ pub fn run(file_name: &str) -> Result<u32, &'static str> {
     Ok(output)
 }
 
-fn parse_line(card_numbers: &mut Vec<u32>, winning_numbers: &mut Vec<u32>, line: &str) {
+fn parse_line(card_numbers: &mut Vec<u64>, winning_numbers: &mut Vec<u64>, line: &str) {
     let mut start = false;
     let mut parsed_cn = false;
 
@@ -51,7 +51,7 @@ fn parse_line(card_numbers: &mut Vec<u32>, winning_numbers: &mut Vec<u32>, line:
         }
 
         if c >= '0' && c <= '9' {
-            current_number = current_number * 10 + (c as u32 - '0' as u32);
+            current_number = current_number * 10 + (c as u64 - '0' as u64);
             continue;
         }
 

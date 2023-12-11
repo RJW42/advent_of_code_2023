@@ -25,7 +25,7 @@ struct MapElement {
 }
 
 
-pub fn run(file_name: &str, part: Part) -> Result<u32, &'static str> {
+pub fn run(file_name: &str, part: Part) -> Result<u64, &'static str> {
     match part {
         Part::P1 => part1(file_name),
         Part::P2 => part2(file_name),
@@ -34,7 +34,7 @@ pub fn run(file_name: &str, part: Part) -> Result<u32, &'static str> {
 
 
 
-fn part2(file_name: &str) -> Result<u32, &'static str> {
+fn part2(file_name: &str) -> Result<u64, &'static str> {
     let input = parse_input(file_name)?;
 
     // print_input(&input);
@@ -58,11 +58,11 @@ fn part2(file_name: &str) -> Result<u32, &'static str> {
         }
     }
 
-    Ok(min as u32)
+    Ok(min as u64)
 }
 
 
-fn part1(file_name: &str) -> Result<u32, &'static str> {
+fn part1(file_name: &str) -> Result<u64, &'static str> {
     let input = parse_input(file_name)?;
 
     // print_input(&input);
@@ -75,7 +75,7 @@ fn part1(file_name: &str) -> Result<u32, &'static str> {
         }
     }
 
-    Ok(min as u32)
+    Ok(min as u64)
 }
 
 

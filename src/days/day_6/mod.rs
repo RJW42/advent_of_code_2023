@@ -5,7 +5,7 @@ use std::fs::File;
 use std::io::{self};
 
 
-pub fn run(file_name: &str, part: Part) -> Result<u32, &'static str> {
+pub fn run(file_name: &str, part: Part) -> Result<u64, &'static str> {
   match part {
       Part::P1 => part1(file_name),
       Part::P2 => part2(file_name),
@@ -13,7 +13,7 @@ pub fn run(file_name: &str, part: Part) -> Result<u32, &'static str> {
 }
 
 
-fn part1(file_name: &str) -> Result<u32, &'static str> {
+fn part1(file_name: &str) -> Result<u64, &'static str> {
   let races = parse_races(file_name)?;
   let mut product = 1;
 
@@ -33,11 +33,11 @@ fn part1(file_name: &str) -> Result<u32, &'static str> {
     }
   }
 
-  Ok(product as u32)
+  Ok(product as u64)
 }
 
 
-fn part2(file_name: &str) -> Result<u32, &'static str> {
+fn part2(file_name: &str) -> Result<u64, &'static str> {
   let races = parse_races(file_name)?;
   let races = combine_races(races);
   let mut product = 1;
@@ -87,7 +87,7 @@ fn part2(file_name: &str) -> Result<u32, &'static str> {
     }
   }
 
-  Ok(product as u32)
+  Ok(product as u64)
 }
 
 

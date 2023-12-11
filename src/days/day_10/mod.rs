@@ -25,7 +25,7 @@ enum Pipe {
 #[derive(Debug)]
 struct Graph {
     nodes: Vec<Vec<Pipe>>,
-    dists: Vec<Vec<Option<u32>>>,
+    dists: Vec<Vec<Option<u64>>>,
     inside: Vec<Vec<Option<bool>>>, 
     width: usize,
     height: usize,
@@ -33,7 +33,7 @@ struct Graph {
 }
 
 
-pub fn run(file_name: &str, part: Part) -> Result<u32, &'static str> {
+pub fn run(file_name: &str, part: Part) -> Result<u64, &'static str> {
     match part {
         Part::P1 => part1(file_name),
         Part::P2 => part2(file_name),
@@ -41,7 +41,7 @@ pub fn run(file_name: &str, part: Part) -> Result<u32, &'static str> {
 }
 
 
-fn part1(file_name: &str) -> Result<u32, &'static str> {
+fn part1(file_name: &str) -> Result<u64, &'static str> {
     let mut graph = parse_graph(file_name)?;
     let Some((mut p1,mut p2)) = starting_poses(&mut graph) else {
         return Err("Invalid start position");
@@ -79,7 +79,7 @@ fn part1(file_name: &str) -> Result<u32, &'static str> {
 }
 
 
-fn part2(file_name: &str) -> Result<u32, &'static str> {
+fn part2(file_name: &str) -> Result<u64, &'static str> {
     let mut graph = parse_graph(file_name)?;
     let Some((mut p1,mut p2)) = starting_poses(&mut graph) else {
         return Err("Invalid start position");

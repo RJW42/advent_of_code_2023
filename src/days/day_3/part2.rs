@@ -5,12 +5,12 @@ use std::path::Path;
 
 enum Entry {
     Symbol(char),
-    Number(u32, u32, bool),
+    Number(u64, u64, bool),
     Empty
 }
 
 
-pub fn run(file_name: &str) -> Result<u32, &'static str> {
+pub fn run(file_name: &str) -> Result<u64, &'static str> {
     let mut grid: Vec<Entry> = Vec::new();
     let mut symbol_poss: Vec<(usize, usize)> = Vec::new();
     let mut width = 0;
@@ -180,7 +180,7 @@ pub fn run(file_name: &str) -> Result<u32, &'static str> {
     Ok(sum)
 }
 
-fn mark_visited(x: i32, y: i32, width: usize, grid: &mut Vec<Entry>) -> Option<(u32, u32)> {
+fn mark_visited(x: i32, y: i32, width: usize, grid: &mut Vec<Entry>) -> Option<(u64, u64)> {
     let pos = (y * width as i32) + x;
     if let Entry::Number(n, i, _) = grid[pos as usize] {
         grid[pos as usize] = Entry::Number(n, i, true);
@@ -194,7 +194,7 @@ fn is_valid(x: i32, y: i32, width: usize, height: usize) -> bool {
 }
 
 
-fn parse_line(grid: &mut Vec<Entry>, symbol_poss: &mut Vec<(usize, usize)>,line: &str, height: usize, id: &mut u32) {
+fn parse_line(grid: &mut Vec<Entry>, symbol_poss: &mut Vec<(usize, usize)>,line: &str, height: usize, id: &mut u64) {
     let mut current_number = 0;
     let mut current_number_size = 0;
 
@@ -210,7 +210,7 @@ fn parse_line(grid: &mut Vec<Entry>, symbol_poss: &mut Vec<(usize, usize)>,line:
         
         if c >= '0' && c <= '9' {
             current_number_size += 1;
-            current_number = current_number * 10 + (c as u32 - '0' as u32);
+            current_number = current_number * 10 + (c as u64 - '0' as u64);
         } else if c == '.' {
             grid.push(Entry::Empty);
         } else {

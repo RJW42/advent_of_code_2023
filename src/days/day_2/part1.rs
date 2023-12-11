@@ -5,14 +5,14 @@ use std::cmp;
 
 
 struct Game {
-    id: u32,
-    blue: u32,
-    green: u32,
-    red: u32
+    id: u64,
+    blue: u64,
+    green: u64,
+    red: u64
 }
 
 
-pub fn run(file_name: &str) -> Result<u32, &'static str> {
+pub fn run(file_name: &str) -> Result<u64, &'static str> {
     let mut output = 0;
 
     if let Ok(lines) = read_lines(file_name) {
@@ -71,14 +71,14 @@ fn parse_game(line: &str) -> Option<Game> {
 }
 
 
-fn parse_digit(c: char) -> Option<u32> {
+fn parse_digit(c: char) -> Option<u64> {
     let d = c as i32 - '0' as i32;
 
     if !(d >= 0 && d <= 9)  {
         return None;
     }
 
-    Some(d as u32)
+    Some(d as u64)
 }
 
 fn is_possible(game: &Game) -> bool {

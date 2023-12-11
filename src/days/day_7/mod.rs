@@ -37,11 +37,11 @@ enum CardType {
 struct Hand {
     cards: [CardType; 5],
     hand_type: HandType,
-    bid: u32
+    bid: u64
 }
 
 
-pub fn run(file_name: &str, part: Part) -> Result<u32, &'static str> {
+pub fn run(file_name: &str, part: Part) -> Result<u64, &'static str> {
   match part {
       Part::P1 => part1(file_name, false),
       Part::P2 => part1(file_name, true),
@@ -49,14 +49,14 @@ pub fn run(file_name: &str, part: Part) -> Result<u32, &'static str> {
 }
 
 
-fn part1(file_name: &str, use_joker: bool) -> Result<u32, &'static str> {
+fn part1(file_name: &str, use_joker: bool) -> Result<u64, &'static str> {
     let hands = parse_hands(file_name, use_joker)?;
     let mut output = 0;
-    let length = hands.len() as u32;
+    let length = hands.len() as u64;
 
     for (i, h) in hands.iter().enumerate() {
         println!("{:?}", h);
-        output += h.bid * (length - i as u32);
+        output += h.bid * (length - i as u64);
     }
   
     Ok(output)
@@ -105,7 +105,7 @@ fn parse_hand(line: &str, use_joker: bool) -> Option<Hand> {
      * A -> 12
      */
 
-    let mut count: [u32; 13] = [0; 13];
+    let mut count: [u64; 13] = [0; 13];
     let mut hand: [CardType; 5] = [CardType::Two; 5];
     let mut joker_count = 0;
 
@@ -136,7 +136,7 @@ fn parse_hand(line: &str, use_joker: bool) -> Option<Hand> {
         hand[j as usize] = c;
     }
 
-    let bid = parse_num(&mut chars, true)? as u32;
+    let bid = parse_num(&mut chars, true)? as u64;
     let hand_type = determin_type(&count, joker_count);
 
     Some(Hand {
@@ -147,7 +147,7 @@ fn parse_hand(line: &str, use_joker: bool) -> Option<Hand> {
 }
 
 
-fn determin_type(count: &[u32; 13], joker_count: u32) -> HandType {
+fn determin_type(count: &[u64; 13], joker_count: u64) -> HandType {
     let mut has_four = false;
     let mut has_three = false;
     let mut has_two_pair = false;

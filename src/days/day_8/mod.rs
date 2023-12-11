@@ -14,17 +14,17 @@ enum Action {
 
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
 struct Node {
-    id: u32,
-    left_id: u32,
-    right_id: u32,
+    id: u64,
+    left_id: u64,
+    right_id: u64,
     is_end: bool
 }
 
-static START_ID: u32 = 0;
-static END_ID: u32 = 17575;
+static START_ID: u64 = 0;
+static END_ID: u64 = 17575;
 
 
-pub fn run(file_name: &str, part: Part) -> Result<u32, &'static str> {
+pub fn run(file_name: &str, part: Part) -> Result<u64, &'static str> {
     match part {
         Part::P1 => part1(file_name),
         Part::P2 => part2(file_name),
@@ -32,7 +32,7 @@ pub fn run(file_name: &str, part: Part) -> Result<u32, &'static str> {
   }
   
 
-fn part1(file_name: &str) -> Result<u32, &'static str> {
+fn part1(file_name: &str) -> Result<u64, &'static str> {
     let (path, graph, _) = parse_input(file_name)?;
     
     let mut i = 0;
@@ -66,7 +66,7 @@ fn part1(file_name: &str) -> Result<u32, &'static str> {
 }
 
 
-fn part2(file_name: &str) -> Result<u32, &'static str> {
+fn part2(file_name: &str) -> Result<u64, &'static str> {
     let (path, graph, start_nodes) = parse_input(file_name)?;
 
     println!("{:?}", path);
@@ -77,7 +77,7 @@ fn part2(file_name: &str) -> Result<u32, &'static str> {
         let Some(_node) = graph[id as usize] else {
             return Err("Failed to find start node");
         };
-        current_nodes.push((id as usize, 0 as u32));
+        current_nodes.push((id as usize, 0 as u64));
     }
 
     println!("{:?}", current_nodes);
@@ -120,11 +120,11 @@ fn part2(file_name: &str) -> Result<u32, &'static str> {
     }
 
   
-    Ok(result as u32)
+    Ok(result as u64)
 }
 
 
-fn parse_input(file_name: &str) -> Result<(Vec<Action>, [Option<Node>; 17576], Vec<u32>), &'static str> {
+fn parse_input(file_name: &str) -> Result<(Vec<Action>, [Option<Node>; 17576], Vec<u64>), &'static str> {
     let Ok(mut lines) = read_lines(file_name) else {
         return Err("Failed to read file");
     };
@@ -165,7 +165,7 @@ fn parse_path(lines: &mut io::Lines<io::BufReader<File>>) -> Option<Vec<Action>>
 }
 
 
-fn parse_graph(lines: &mut io::Lines<io::BufReader<File>>) -> Option<([Option<Node>; 17576], Vec<u32>)> {
+fn parse_graph(lines: &mut io::Lines<io::BufReader<File>>) -> Option<([Option<Node>; 17576], Vec<u64>)> {
     let mut start_nodes = Vec::new();
     let mut graph: [Option<Node>; 17576] = [None; 17576];
 
@@ -186,7 +186,7 @@ fn parse_graph(lines: &mut io::Lines<io::BufReader<File>>) -> Option<([Option<No
 }
 
 
-fn parse_node(line: &str, start_nodes: &mut Vec<u32>) -> Option<Node> {
+fn parse_node(line: &str, start_nodes: &mut Vec<u64>) -> Option<Node> {
     let chars_vec = line.chars().collect::<Vec<char>>();
     let mut chars = chars_vec.iter().peekable();
 
@@ -209,7 +209,7 @@ fn parse_node(line: &str, start_nodes: &mut Vec<u32>) -> Option<Node> {
 }
 
 
-fn parse_id<'a, I>(chars: &mut Peekable<I>) -> Option<(u32, bool, bool)> 
+fn parse_id<'a, I>(chars: &mut Peekable<I>) -> Option<(u64, bool, bool)> 
 where I: Iterator<Item = &'a char>  {
     let mut output = None;
     let mut output_val = 0;
@@ -231,7 +231,7 @@ where I: Iterator<Item = &'a char>  {
                 }
 
                 output_val = output_val * 26 + (
-                    ch as u32 - 'A' as u32
+                    ch as u64 - 'A' as u64
                 );
 
                 output = Some(output_val);
