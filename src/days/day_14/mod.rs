@@ -22,8 +22,8 @@ struct Input {
 
 pub fn run(file_name: &str, part: Part) -> Result<u64, &'static str> {
     match part {
-        Part::P1 => part2(file_name),
-        Part::P2 => todo!(),
+        Part::P1 => part1(file_name),
+        Part::P2 => part2(file_name),
     }
 }
 
