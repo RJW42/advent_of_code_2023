@@ -1,6 +1,7 @@
 use crate::days::Part;
 use crate::days::{read_lines};
 use std::fmt;
+use std::collections::HashMap;
 
 use self::Element::*;
 
@@ -21,7 +22,7 @@ struct Input {
 
 pub fn run(file_name: &str, part: Part) -> Result<u64, &'static str> {
     match part {
-        Part::P1 => part1(file_name),
+        Part::P1 => part2(file_name),
         Part::P2 => todo!(),
     }
 }
@@ -37,6 +38,75 @@ fn part1(file_name: &str) -> Result<u64, &'static str> {
     println!("{}", input);
 
     Ok(count_score(&input))
+}
+
+
+fn part2(file_name: &str) -> Result<u64, &'static str> {
+    let mut input= parse_input(file_name)?;
+    let mut map = HashMap::new();
+
+    let mut i: i32 = 0;
+    let mut jumped = false;
+    let max = 1000000000;
+
+    // Too low 79498
+    //         79723
+
+    loop {
+        if i >= max {
+            break;
+        }
+
+        perform_cycle(&mut input);
+        let hash = input.hash();
+        println!("{} {}", i, count_score(&input));
+
+        if map.contains_key(&hash) && !jumped {
+            let i_at_prev = map.get(&hash).unwrap();
+            let diff = i - i_at_prev;
+            let max_increase = max - i;
+            let increase = (max_increase / diff - 1) * diff + 1;
+
+            println!("{} {} {} {}", i, i_at_prev, diff, increase);
+
+            if increase <= 0 {
+                i += 1;
+            } else {
+                i += increase;
+            }
+
+            jumped = true;
+            continue;
+        }
+
+        map.insert(hash, i);
+        i += 1;
+    }
+
+    // 68
+
+    Ok(count_score(&input))
+}
+
+
+fn perform_cycle(input: &mut Input) {
+    // Slide North 
+    input.slide_north();
+
+    input.rotate();
+    input.slide_north();
+    // Slide West
+
+    input.rotate();
+    input.slide_north();
+    // Slide South
+
+    input.rotate();
+    input.slide_north();
+    // Slide East
+
+    input.rotate();
+    // Face North Again 
 }
 
 
@@ -76,6 +146,16 @@ impl Input {
         }
 
         self.elements[(y * self.width) + x] = element;
+    }
+
+    fn replace(&mut self, x1: usize, y1: usize, x2: usize, y2: usize) {
+        if x1 >= self.width || y1 >= self.height || 
+            x2 >= self.width || y2 >= self.height {
+            return;
+        }
+
+        self.elements[(y1 * self.width) + x1] = 
+            self.elements[(y2 * self.width) + x2];
     }
 
 
@@ -138,6 +218,46 @@ impl Input {
                 head[x] += 1;
             }
         }
+    }
+
+
+    fn rotate(&mut self) {
+        if self.width != self.height {
+            panic!();
+        }
+
+        let size = self.width;
+
+        for i in 0..(size / 2) {
+            for j in i..(size - i - 1) {
+                let tmp = *self.get(j, i).unwrap();
+                self.replace(
+                    j, i, i, size - 1 - j
+                );
+                self.replace(
+                    i, size - 1 - j, size - 1 - j, size - 1 - i
+                );
+                self.replace(
+                    size - 1 - j, size - 1 - i, size - 1 - i, j
+                );
+                self.set(size - 1 - i, j, tmp);
+            }
+        }
+    }
+
+
+    fn hash(&self) -> String {
+        let mut output = String::new();
+
+        for i in 0..self.elements.len() {
+            output.push(match self.elements[i] {
+                Empty => '.',
+                Wall => '#',
+                Rock => 'O'
+            });
+        }
+
+        output
     }
 }
 
