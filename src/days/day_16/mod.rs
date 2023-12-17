@@ -1,4 +1,3 @@
-use std::f32::consts::E;
 use std::usize;
 use std::fmt;
 use std::cmp::max;
